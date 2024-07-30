@@ -3,12 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Website</title>
+    <title>Impact.com Style Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            margin: 50px auto;
+            max-width: 600px;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <div class="header">
+        <h1>Impact.com Style Page</h1>
+    </div>
+    <div class="container">
+        <h1>Hello, World!</h1>
+        <button id="apiRequestButton">Send API Request</button>
+    </div>
+
     <script>
-        // Google Tag Manager Script will be added here later
+        // Extract query parameters and push to dataLayer
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var key = params.get('key');
+            var value = params.get('value');
+            if (key && value) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'key': key,
+                    'value': value
+                });
+            }
+        })();
+
+        // Add event listener to the button
+        document.getElementById('apiRequestButton').addEventListener('click', function() {
+            var key, value;
+            // Get the key and value from the dataLayer
+            window.dataLayer.forEach(function(item) {
+                if (item.key && item.value) {
+                    key = item.key;
+                    value = item.value;
+                }
+            });
+
+            // If key and value are present, send the API request
+            if (key && value) {
+                var apiUrl = 'https://httpbin.org/get?' + new URLSearchParams({ key: key, value: value }).toString();
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('API Response:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                console.log('No key and value found in the dataLayer.');
+            }
+        });
     </script>
 </body>
 </html>
